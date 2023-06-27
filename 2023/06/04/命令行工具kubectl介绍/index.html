@@ -1,0 +1,975 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>命令行工具kubectl介绍 | 邯郸小胖</title><meta name="author" content="邯郸小胖"><meta name="copyright" content="邯郸小胖"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="​ 命令行工具 (kubectl)Kubernetes 提供 kubectl 是使用 Kubernetes API 与 Kubernetes 集群的控制面进行通信的命令行工具。 这个工具叫做 kubectl。 针对配置信息，kubectl 在 $HOME&#x2F;.kube 目录中查找一个名为 config 的配置文件。 你可以通过设置 KUBECONFIG 环境变量或设置 --kubeconfig 参数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="命令行工具kubectl介绍">
+<meta property="og:url" content="http://example.com/2023/06/04/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7kubectl%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:site_name" content="邯郸小胖">
+<meta property="og:description" content="​ 命令行工具 (kubectl)Kubernetes 提供 kubectl 是使用 Kubernetes API 与 Kubernetes 集群的控制面进行通信的命令行工具。 这个工具叫做 kubectl。 针对配置信息，kubectl 在 $HOME&#x2F;.kube 目录中查找一个名为 config 的配置文件。 你可以通过设置 KUBECONFIG 环境变量或设置 --kubeconfig 参数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/HDXP/storage/blob/master/avatar.jpg?raw=true">
+<meta property="article:published_time" content="2023-06-04T10:30:00.000Z">
+<meta property="article:modified_time" content="2023-06-27T09:07:51.722Z">
+<meta property="article:author" content="邯郸小胖">
+<meta property="article:tag" content="k8s">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/HDXP/storage/blob/master/avatar.jpg?raw=true"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://example.com/2023/06/04/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7kubectl%E4%BB%8B%E7%BB%8D/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '命令行工具kubectl介绍',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-06-27 09:07:51'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+    win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = url
+      if (id) link.id = id
+      link.onerror = reject
+      link.onload = link.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        link.onload = link.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(link)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://github.com/HDXP/storage/blob/master/avatar.jpg?raw=true" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="not-top-img" id="page-header"><nav id="nav"><span id="blog-info"><a href="/" title="邯郸小胖"><span class="site-name">邯郸小胖</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page group" href="javascript:void(0);"><i class="fa-fw fas fa-list"></i><span> 清单</span><i class="fas fa-chevron-down"></i></a><ul class="menus_item_child"><li><a class="site-page child" href="/music/"><i class="fa-fw fas fa-music"></i><span> 音乐</span></a></li><li><a class="site-page child" href="/movies/"><i class="fa-fw fas fa-video"></i><span> 电影</span></a></li><li><a class="site-page child" href="/Gallery/"><i class="fa-fw fas fa-images"></i><span> 照片</span></a></li></ul></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav></header><main class="layout" id="content-inner"><div id="post"><div id="post-info"><h1 class="post-title">命令行工具kubectl介绍</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-06-04T10:30:00.000Z" title="发表于 2023-06-04 10:30:00">2023-06-04</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-06-27T09:07:51.722Z" title="更新于 2023-06-27 09:07:51">2023-06-27</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/k8s/">k8s</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="命令行工具kubectl介绍"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div><article class="post-content" id="article-container"><p>​</p>
+<h1 id="命令行工具-kubectl"><a href="#命令行工具-kubectl" class="headerlink" title="命令行工具 (kubectl)"></a>命令行工具 (kubectl)</h1><p>Kubernetes 提供 kubectl 是使用 Kubernetes API 与 Kubernetes 集群的<a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/glossary/?all=true#term-control-plane">控制面</a>进行通信的命令行工具。</p>
+<p>这个工具叫做 <code>kubectl</code>。</p>
+<p>针对配置信息，<code>kubectl</code> 在 <code>$HOME/.kube</code> 目录中查找一个名为 <code>config</code> 的配置文件。 你可以通过设置 <code>KUBECONFIG</code> 环境变量或设置 <a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/configuration/organize-cluster-access-kubeconfig/"><code>--kubeconfig</code></a></p>
+<p>参数来指定其它 <a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/configuration/organize-cluster-access-kubeconfig/">kubeconfig</a> 文件。</p>
+<p>本文概述了 <code>kubectl</code> 语法和命令操作描述，并提供了常见的示例。 有关每个命令的详细信息，包括所有受支持的参数和子命令， 请参阅 <a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/generated/kubectl/kubectl-commands/">kubectl</a> 参考文档。</p>
+<p>有关安装说明，请参见<a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/tasks/tools/#kubectl">安装 kubectl</a>； 如需快速指南，请参见<a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/cheatsheet/">备忘单</a>。 如果你更习惯使用 <code>docker</code> 命令行工具， <a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/docker-cli-to-kubectl/">Docker 用户的 <code>kubectl</code></a> 介绍了一些 Kubernetes 的等价命令。</p>
+<h2 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h2><p>使用以下语法从终端窗口运行 <code>kubectl</code> 命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl [command] [TYPE] [NAME] [flags]</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>command</code>、<code>TYPE</code>、<code>NAME</code> 和 <code>flags</code> 分别是：</p>
+<ul>
+<li><p><code>command</code>：指定要对一个或多个资源执行的操作，例如 <code>create</code>、<code>get</code>、<code>describe</code>、<code>delete</code>。</p>
+</li>
+<li><p><code>TYPE</code>：指定<a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/#resource-types">资源类型</a>。资源类型不区分大小写， 可以指定单数、复数或缩写形式。例如，以下命令输出相同的结果：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod pod1</span><br><span class="line">kubectl get pods pod1</span><br><span class="line">kubectl get po pod1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>NAME</code>：指定资源的名称。名称区分大小写。 如果省略名称，则显示所有资源的详细信息。例如：<code>kubectl get pods</code>。</p>
+<p>在对多个资源执行操作时，你可以按类型和名称指定每个资源，或指定一个或多个文件：</p>
+</li>
+<li><p>要按类型和名称指定资源：</p>
+</li>
+<li><p>要对所有类型相同的资源进行分组，请执行以下操作：<code>TYPE1 name1 name2 name&lt;#&gt;</code>。<br>例子：<code>kubectl get pod example-pod1 example-pod2</code></p>
+</li>
+<li><p>分别指定多个资源类型：<code>TYPE1/name1 TYPE1/name2 TYPE2/name3 TYPE&lt;#&gt;/name&lt;#&gt;</code>。<br>例子：<code>kubectl get pod/example-pod1 replicationcontroller/example-rc1</code></p>
+</li>
+<li><p>用一个或多个文件指定资源：<code>-f file1 -f file2 -f file&lt;#&gt;</code></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/concepts/configuration/overview/#general-configuration-tips">使用 YAML 而不是 JSON</a>， 因为 YAML 对用户更友好, 特别是对于配置文件。<br>例子：<code>kubectl get -f ./pod.yaml</code></p>
+</li>
+<li><p><code>flags</code>： 指定可选的参数。例如，可以使用 <code>-s</code> 或 <code>--server</code> 参数指定 Kubernetes API 服务器的地址和端口。</p>
+</li>
+</ul>
+<p><strong>注意：</strong></p>
+<p>从命令行指定的参数会覆盖默认值和任何相应的环境变量。</p>
+<p>如果你需要帮助，在终端窗口中运行 <code>kubectl help</code>。</p>
+<h2 id="集群内身份验证和命名空间覆盖"><a href="#集群内身份验证和命名空间覆盖" class="headerlink" title="集群内身份验证和命名空间覆盖"></a>集群内身份验证和命名空间覆盖</h2><p>默认情况下，<code>kubectl</code> 命令首先确定它是否在 Pod 中运行，从而被视为在集群中运行。 它首先检查 <code>KUBERNETES_SERVICE_HOST</code> 和 <code>KUBERNETES_SERVICE_PORT</code> 环境变量以及 <code>/var/run/secrets/kubernetes.io/serviceaccount/token</code> 中是否存在服务帐户令牌文件。 如果三个条件都被满足，则假定在集群内进行身份验证。</p>
+<p>为保持向后兼容性，如果在集群内身份验证期间设置了 <code>POD_NAMESPACE</code> 环境变量，它将覆盖服务帐户令牌中的默认命名空间。 任何依赖默认命名空间的清单或工具都会受到影响。</p>
+<p><strong><code>POD_NAMESPACE</code> 环境变量</strong></p>
+<p>如果设置了 <code>POD_NAMESPACE</code> 环境变量，对命名空间资源的 CLI 操作对象将使用该变量值作为默认值。 例如，如果该变量设置为 <code>seattle</code>，<code>kubectl get pods</code> 将返回 <code>seattle</code> 命名空间中的 Pod。 这是因为 Pod 是一个命名空间资源，且命令中没有提供命名空间。</p>
+<p>直接使用 <code>--namespace &lt;value&gt;</code> 会覆盖此行为。</p>
+<p><strong>kubectl 如何处理 ServiceAccount 令牌</strong></p>
+<p>假设：</p>
+<ul>
+<li>有 Kubernetes 服务帐户令牌文件挂载在 <code>/var/run/secrets/kubernetes.io/serviceaccount/token</code> 上，并且</li>
+<li>设置了 <code>KUBERNETES_SERVICE_HOST</code> 环境变量，并且</li>
+<li>设置了 <code>KUBERNETES_SERVICE_PORT</code> 环境变量，并且</li>
+<li>你没有在 kubectl 命令行上明确指定命名空间。</li>
+</ul>
+<p>然后 kubectl 假定它正在你的集群中运行。 kubectl 工具查找该 ServiceAccount 的命名空间 （该命名空间与 Pod 的命名空间相同）并针对该命名空间进行操作。 这与集群外运行的情况不同； 当 kubectl 在集群外运行并且你没有指定命名空间时， kubectl 命令会针对你在客户端配置中为当前上下文设置的命名空间进行操作。 要为你的 kubectl 更改默认的命名空间，你可以使用以下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl config set-context --current --namespace=&lt;namespace-name&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h2><p>下表包含所有 kubectl 操作的简短描述和普通语法：</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>语法</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>alpha</code></td>
+<td><code>kubectl alpha SUBCOMMAND [flags]</code></td>
+<td>列出与 alpha 特性对应的可用命令，这些特性在 Kubernetes 集群中默认情况下是不启用的。</td>
+</tr>
+<tr>
+<td><code>annotate</code></td>
+<td>&#96;kubectl annotate (-f FILENAME</td>
+<td>TYPE NAME</td>
+</tr>
+<tr>
+<td><code>api-resources</code></td>
+<td><code>kubectl api-resources [flags]</code></td>
+<td>列出可用的 API 资源。</td>
+</tr>
+<tr>
+<td><code>api-versions</code></td>
+<td><code>kubectl api-versions [flags]</code></td>
+<td>列出可用的 API 版本。</td>
+</tr>
+<tr>
+<td><code>apply</code></td>
+<td><code>kubectl apply -f FILENAME [flags]</code></td>
+<td>从文件或 stdin 对资源应用配置更改。</td>
+</tr>
+<tr>
+<td><code>attach</code></td>
+<td><code>kubectl attach POD -c CONTAINER [-i] [-t] [flags]</code></td>
+<td>挂接到正在运行的容器，查看输出流或与容器（stdin）交互。</td>
+</tr>
+<tr>
+<td><code>auth</code></td>
+<td><code>kubectl auth [flags] [options]</code></td>
+<td>检查授权。</td>
+</tr>
+<tr>
+<td><code>autoscale</code></td>
+<td>&#96;kubectl autoscale (-f FILENAME</td>
+<td>TYPE NAME</td>
+</tr>
+<tr>
+<td><code>certificate</code></td>
+<td><code>kubectl certificate SUBCOMMAND [options]</code></td>
+<td>修改证书资源。</td>
+</tr>
+<tr>
+<td><code>cluster-info</code></td>
+<td><code>kubectl cluster-info [flags]</code></td>
+<td>显示有关集群中主服务器和服务的端口信息。</td>
+</tr>
+<tr>
+<td><code>completion</code></td>
+<td><code>kubectl completion SHELL [options]</code></td>
+<td>为指定的 Shell（Bash 或 Zsh）输出 Shell 补齐代码。</td>
+</tr>
+<tr>
+<td><code>config</code></td>
+<td><code>kubectl config SUBCOMMAND [flags]</code></td>
+<td>修改 kubeconfig 文件。有关详细信息，请参阅各个子命令。</td>
+</tr>
+<tr>
+<td><code>convert</code></td>
+<td><code>kubectl convert -f FILENAME [options]</code></td>
+<td>在不同的 API 版本之间转换配置文件。配置文件可以是 YAML 或 JSON 格式。注意 - 需要安装 <code>kubectl-convert</code> 插件。</td>
+</tr>
+<tr>
+<td><code>cordon</code></td>
+<td><code>kubectl cordon NODE [options]</code></td>
+<td>将节点标记为不可调度。</td>
+</tr>
+<tr>
+<td><code>cp</code></td>
+<td><code>kubectl cp &lt;file-spec-src&gt; &lt;file-spec-dest&gt; [options]</code></td>
+<td>从容器复制文件、目录或将文件、目录复制到容器。</td>
+</tr>
+<tr>
+<td><code>create</code></td>
+<td><code>kubectl create -f FILENAME [flags]</code></td>
+<td>从文件或 stdin 创建一个或多个资源。</td>
+</tr>
+<tr>
+<td><code>delete</code></td>
+<td>&#96;kubectl delete (-f FILENAME</td>
+<td>TYPE [NAME</td>
+</tr>
+<tr>
+<td><code>describe</code></td>
+<td>&#96;kubectl describe (-f FILENAME</td>
+<td>TYPE [NAME_PREFIX</td>
+</tr>
+<tr>
+<td><code>diff</code></td>
+<td><code>kubectl diff -f FILENAME [flags]</code></td>
+<td>在当前起作用的配置和文件或标准输之间作对比 (<strong>BETA</strong>)</td>
+</tr>
+<tr>
+<td><code>drain</code></td>
+<td><code>kubectl drain NODE [options]</code></td>
+<td>腾空节点以准备维护。</td>
+</tr>
+<tr>
+<td><code>edit</code></td>
+<td>&#96;kubectl edit (-f FILENAME</td>
+<td>TYPE NAME</td>
+</tr>
+<tr>
+<td><code>events</code></td>
+<td><code>kubectl events</code></td>
+<td>列举事件。</td>
+</tr>
+<tr>
+<td><code>exec</code></td>
+<td><code>kubectl exec POD [-c CONTAINER] [-i] [-t] [flags] [-- COMMAND [args...]]</code></td>
+<td>对 Pod 中的容器执行命令。</td>
+</tr>
+<tr>
+<td><code>explain</code></td>
+<td><code>kubectl explain [--recursive=false] [flags]</code></td>
+<td>获取多种资源的文档。例如 Pod、Node、Service 等。</td>
+</tr>
+<tr>
+<td><code>expose</code></td>
+<td>&#96;kubectl expose (-f FILENAME</td>
+<td>TYPE NAME</td>
+</tr>
+<tr>
+<td><code>get</code></td>
+<td>&#96;kubectl get (-f FILENAME</td>
+<td>TYPE [NAME</td>
+</tr>
+<tr>
+<td><code>kustomize</code></td>
+<td>&#96;kubectl kustomize<code>[flags] [options]</code></td>
+<td>列出从 kustomization.yaml 文件中的指令生成的一组 API 资源。参数必须是包含文件的目录的路径，或者是 git 存储库 URL，其路径后缀相对于存储库根目录指定了相同的路径。</td>
+</tr>
+<tr>
+<td><code>label</code></td>
+<td>&#96;kubectl label (-f FILENAME</td>
+<td>TYPE NAME</td>
+</tr>
+<tr>
+<td><code>logs</code></td>
+<td><code>kubectl logs POD [-c CONTAINER] [--follow] [flags]</code></td>
+<td>打印 Pod 中容器的日志。</td>
+</tr>
+<tr>
+<td><code>options</code></td>
+<td><code>kubectl options</code></td>
+<td>全局命令行选项列表，这些选项适用于所有命令。</td>
+</tr>
+<tr>
+<td><code>patch</code></td>
+<td>&#96;kubectl patch (-f FILENAME</td>
+<td>TYPE NAME</td>
+</tr>
+<tr>
+<td><code>plugin</code></td>
+<td><code>kubectl plugin [flags] [options]</code></td>
+<td>提供用于与插件交互的实用程序。</td>
+</tr>
+<tr>
+<td><code>port-forward</code></td>
+<td><code>kubectl port-forward POD [LOCAL_PORT:]REMOTE_PORT [...[LOCAL_PORT_N:]REMOTE_PORT_N] [flags]</code></td>
+<td>将一个或多个本地端口转发到一个 Pod。</td>
+</tr>
+<tr>
+<td><code>proxy</code></td>
+<td><code>kubectl proxy [--port=PORT] [--www=static-dir] [--www-prefix=prefix] [--api-prefix=prefix] [flags]</code></td>
+<td>运行访问 Kubernetes API 服务器的代理。</td>
+</tr>
+<tr>
+<td><code>replace</code></td>
+<td><code>kubectl replace -f FILENAME</code></td>
+<td>基于文件或标准输入替换资源。</td>
+</tr>
+<tr>
+<td><code>rollout</code></td>
+<td><code>kubectl rollout SUBCOMMAND [options]</code></td>
+<td>管理资源的上线。有效的资源类型包括：Deployment、 DaemonSet 和 StatefulSet。</td>
+</tr>
+<tr>
+<td><code>run</code></td>
+<td>&#96;kubectl run NAME –image&#x3D;image [–env&#x3D;”key&#x3D;value”] [–port&#x3D;port] [–dry-run&#x3D;server</td>
+<td>client</td>
+</tr>
+<tr>
+<td><code>scale</code></td>
+<td>&#96;kubectl scale (-f FILENAME</td>
+<td>TYPE NAME</td>
+</tr>
+<tr>
+<td><code>set</code></td>
+<td><code>kubectl set SUBCOMMAND [options]</code></td>
+<td>配置应用资源。</td>
+</tr>
+<tr>
+<td><code>taint</code></td>
+<td><code>kubectl taint NODE NAME KEY_1=VAL_1:TAINT_EFFECT_1 ... KEY_N=VAL_N:TAINT_EFFECT_N [options]</code></td>
+<td>更新一个或多个节点上的污点。</td>
+</tr>
+<tr>
+<td><code>top</code></td>
+<td><code>kubectl top [flags] [options]</code></td>
+<td>显示资源（CPU、内存、存储）的使用情况。</td>
+</tr>
+<tr>
+<td><code>uncordon</code></td>
+<td><code>kubectl uncordon NODE [options]</code></td>
+<td>将节点标记为可调度。</td>
+</tr>
+<tr>
+<td><code>version</code></td>
+<td><code>kubectl version [--client] [flags]</code></td>
+<td>显示运行在客户端和服务器上的 Kubernetes 版本。</td>
+</tr>
+<tr>
+<td><code>wait</code></td>
+<td>&#96;kubectl wait ([-f FILENAME]</td>
+<td>resource.group&#x2F;resource.name</td>
+</tr>
+</tbody></table>
+<p>了解更多有关命令操作的信息， 请参阅 <a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/kubectl/">kubectl</a> 参考文档。</p>
+<h2 id="资源类型"><a href="#资源类型" class="headerlink" title="资源类型"></a>资源类型</h2><p>下表列出所有受支持的资源类型及其缩写别名。</p>
+<p>(以下输出可以通过 <code>kubectl api-resources</code> 获取，内容以 Kubernetes 1.25.0 版本为准。)</p>
+<table>
+<thead>
+<tr>
+<th>资源名</th>
+<th>缩写名</th>
+<th>API 版本</th>
+<th>按命名空间</th>
+<th>资源类型</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>bindings</code></td>
+<td></td>
+<td>v1</td>
+<td>true</td>
+<td>Binding</td>
+</tr>
+<tr>
+<td><code>componentstatuses</code></td>
+<td><code>cs</code></td>
+<td>v1</td>
+<td>false</td>
+<td>ComponentStatus</td>
+</tr>
+<tr>
+<td><code>configmaps</code></td>
+<td><code>cm</code></td>
+<td>v1</td>
+<td>true</td>
+<td>ConfigMap</td>
+</tr>
+<tr>
+<td><code>endpoints</code></td>
+<td><code>ep</code></td>
+<td>v1</td>
+<td>true</td>
+<td>Endpoints</td>
+</tr>
+<tr>
+<td><code>events</code></td>
+<td><code>ev</code></td>
+<td>v1</td>
+<td>true</td>
+<td>Event</td>
+</tr>
+<tr>
+<td><code>limitranges</code></td>
+<td><code>limits</code></td>
+<td>v1</td>
+<td>true</td>
+<td>LimitRange</td>
+</tr>
+<tr>
+<td><code>namespaces</code></td>
+<td><code>ns</code></td>
+<td>v1</td>
+<td>false</td>
+<td>Namespace</td>
+</tr>
+<tr>
+<td><code>nodes</code></td>
+<td><code>no</code></td>
+<td>v1</td>
+<td>false</td>
+<td>Node</td>
+</tr>
+<tr>
+<td><code>persistentvolumeclaims</code></td>
+<td><code>pvc</code></td>
+<td>v1</td>
+<td>true</td>
+<td>PersistentVolumeClaim</td>
+</tr>
+<tr>
+<td><code>persistentvolumes</code></td>
+<td><code>pv</code></td>
+<td>v1</td>
+<td>false</td>
+<td>PersistentVolume</td>
+</tr>
+<tr>
+<td><code>pods</code></td>
+<td><code>po</code></td>
+<td>v1</td>
+<td>true</td>
+<td>Pod</td>
+</tr>
+<tr>
+<td><code>podtemplates</code></td>
+<td></td>
+<td>v1</td>
+<td>true</td>
+<td>PodTemplate</td>
+</tr>
+<tr>
+<td><code>replicationcontrollers</code></td>
+<td><code>rc</code></td>
+<td>v1</td>
+<td>true</td>
+<td>ReplicationController</td>
+</tr>
+<tr>
+<td><code>resourcequotas</code></td>
+<td><code>quota</code></td>
+<td>v1</td>
+<td>true</td>
+<td>ResourceQuota</td>
+</tr>
+<tr>
+<td><code>secrets</code></td>
+<td></td>
+<td>v1</td>
+<td>true</td>
+<td>Secret</td>
+</tr>
+<tr>
+<td><code>serviceaccounts</code></td>
+<td><code>sa</code></td>
+<td>v1</td>
+<td>true</td>
+<td>ServiceAccount</td>
+</tr>
+<tr>
+<td><code>services</code></td>
+<td><code>svc</code></td>
+<td>v1</td>
+<td>true</td>
+<td>Service</td>
+</tr>
+<tr>
+<td><code>mutatingwebhookconfigurations</code></td>
+<td></td>
+<td>admissionregistration.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>MutatingWebhookConfiguration</td>
+</tr>
+<tr>
+<td><code>validatingwebhookconfigurations</code></td>
+<td></td>
+<td>admissionregistration.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>ValidatingWebhookConfiguration</td>
+</tr>
+<tr>
+<td><code>customresourcedefinitions</code></td>
+<td><code>crd,crds</code></td>
+<td>apiextensions.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>CustomResourceDefinition</td>
+</tr>
+<tr>
+<td><code>apiservices</code></td>
+<td></td>
+<td>apiregistration.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>APIService</td>
+</tr>
+<tr>
+<td><code>controllerrevisions</code></td>
+<td></td>
+<td>apps&#x2F;v1</td>
+<td>true</td>
+<td>ControllerRevision</td>
+</tr>
+<tr>
+<td><code>daemonsets</code></td>
+<td><code>ds</code></td>
+<td>apps&#x2F;v1</td>
+<td>true</td>
+<td>DaemonSet</td>
+</tr>
+<tr>
+<td><code>deployments</code></td>
+<td><code>deploy</code></td>
+<td>apps&#x2F;v1</td>
+<td>true</td>
+<td>Deployment</td>
+</tr>
+<tr>
+<td><code>replicasets</code></td>
+<td><code>rs</code></td>
+<td>apps&#x2F;v1</td>
+<td>true</td>
+<td>ReplicaSet</td>
+</tr>
+<tr>
+<td><code>statefulsets</code></td>
+<td><code>sts</code></td>
+<td>apps&#x2F;v1</td>
+<td>true</td>
+<td>StatefulSet</td>
+</tr>
+<tr>
+<td><code>tokenreviews</code></td>
+<td></td>
+<td>authentication.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>TokenReview</td>
+</tr>
+<tr>
+<td><code>localsubjectaccessreviews</code></td>
+<td></td>
+<td>authorization.k8s.io&#x2F;v1</td>
+<td>true</td>
+<td>LocalSubjectAccessReview</td>
+</tr>
+<tr>
+<td><code>selfsubjectaccessreviews</code></td>
+<td></td>
+<td>authorization.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>SelfSubjectAccessReview</td>
+</tr>
+<tr>
+<td><code>selfsubjectrulesreviews</code></td>
+<td></td>
+<td>authorization.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>SelfSubjectRulesReview</td>
+</tr>
+<tr>
+<td><code>subjectaccessreviews</code></td>
+<td></td>
+<td>authorization.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>SubjectAccessReview</td>
+</tr>
+<tr>
+<td><code>horizontalpodautoscalers</code></td>
+<td><code>hpa</code></td>
+<td>autoscaling&#x2F;v2</td>
+<td>true</td>
+<td>HorizontalPodAutoscaler</td>
+</tr>
+<tr>
+<td><code>cronjobs</code></td>
+<td><code>cj</code></td>
+<td>batch&#x2F;v1</td>
+<td>true</td>
+<td>CronJob</td>
+</tr>
+<tr>
+<td><code>jobs</code></td>
+<td></td>
+<td>batch&#x2F;v1</td>
+<td>true</td>
+<td>Job</td>
+</tr>
+<tr>
+<td><code>certificatesigningrequests</code></td>
+<td><code>csr</code></td>
+<td>certificates.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>CertificateSigningRequest</td>
+</tr>
+<tr>
+<td><code>leases</code></td>
+<td></td>
+<td>coordination.k8s.io&#x2F;v1</td>
+<td>true</td>
+<td>Lease</td>
+</tr>
+<tr>
+<td><code>endpointslices</code></td>
+<td></td>
+<td>discovery.k8s.io&#x2F;v1</td>
+<td>true</td>
+<td>EndpointSlice</td>
+</tr>
+<tr>
+<td><code>events</code></td>
+<td><code>ev</code></td>
+<td>events.k8s.io&#x2F;v1</td>
+<td>true</td>
+<td>Event</td>
+</tr>
+<tr>
+<td><code>flowschemas</code></td>
+<td></td>
+<td>flowcontrol.apiserver.k8s.io&#x2F;v1beta2</td>
+<td>false</td>
+<td>FlowSchema</td>
+</tr>
+<tr>
+<td><code>prioritylevelconfigurations</code></td>
+<td></td>
+<td>flowcontrol.apiserver.k8s.io&#x2F;v1beta2</td>
+<td>false</td>
+<td>PriorityLevelConfiguration</td>
+</tr>
+<tr>
+<td><code>ingressclasses</code></td>
+<td></td>
+<td>networking.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>IngressClass</td>
+</tr>
+<tr>
+<td><code>ingresses</code></td>
+<td><code>ing</code></td>
+<td>networking.k8s.io&#x2F;v1</td>
+<td>true</td>
+<td>Ingress</td>
+</tr>
+<tr>
+<td><code>networkpolicies</code></td>
+<td><code>netpol</code></td>
+<td>networking.k8s.io&#x2F;v1</td>
+<td>true</td>
+<td>NetworkPolicy</td>
+</tr>
+<tr>
+<td><code>runtimeclasses</code></td>
+<td></td>
+<td>node.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>RuntimeClass</td>
+</tr>
+<tr>
+<td><code>poddisruptionbudgets</code></td>
+<td><code>pdb</code></td>
+<td>policy&#x2F;v1</td>
+<td>true</td>
+<td>PodDisruptionBudget</td>
+</tr>
+<tr>
+<td><code>podsecuritypolicies</code></td>
+<td><code>psp</code></td>
+<td>policy&#x2F;v1beta1</td>
+<td>false</td>
+<td>PodSecurityPolicy</td>
+</tr>
+<tr>
+<td><code>clusterrolebindings</code></td>
+<td></td>
+<td>rbac.authorization.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>ClusterRoleBinding</td>
+</tr>
+<tr>
+<td><code>clusterroles</code></td>
+<td></td>
+<td>rbac.authorization.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>ClusterRole</td>
+</tr>
+<tr>
+<td><code>rolebindings</code></td>
+<td></td>
+<td>rbac.authorization.k8s.io&#x2F;v1</td>
+<td>true</td>
+<td>RoleBinding</td>
+</tr>
+<tr>
+<td><code>roles</code></td>
+<td></td>
+<td>rbac.authorization.k8s.io&#x2F;v1</td>
+<td>true</td>
+<td>Role</td>
+</tr>
+<tr>
+<td><code>priorityclasses</code></td>
+<td><code>pc</code></td>
+<td>scheduling.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>PriorityClass</td>
+</tr>
+<tr>
+<td><code>csidrivers</code></td>
+<td></td>
+<td>storage.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>CSIDriver</td>
+</tr>
+<tr>
+<td><code>csinodes</code></td>
+<td></td>
+<td>storage.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>CSINode</td>
+</tr>
+<tr>
+<td><code>csistoragecapacities</code></td>
+<td></td>
+<td>storage.k8s.io&#x2F;v1</td>
+<td>true</td>
+<td>CSIStorageCapacity</td>
+</tr>
+<tr>
+<td><code>storageclasses</code></td>
+<td><code>sc</code></td>
+<td>storage.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>StorageClass</td>
+</tr>
+<tr>
+<td><code>volumeattachments</code></td>
+<td></td>
+<td>storage.k8s.io&#x2F;v1</td>
+<td>false</td>
+<td>VolumeAttachment</td>
+</tr>
+</tbody></table>
+<h2 id="输出选项"><a href="#输出选项" class="headerlink" title="输出选项"></a>输出选项</h2><p>有关如何格式化或排序某些命令的输出的信息，请参阅以下章节。有关哪些命令支持不同输出选项的详细信息， 请参阅 <a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/kubectl/">kubectl</a> 参考文档。</p>
+<h3 id="格式化输出"><a href="#格式化输出" class="headerlink" title="格式化输出"></a>格式化输出</h3><p>所有 <code>kubectl</code> 命令的默认输出格式都是人类可读的纯文本格式。要以特定格式在终端窗口输出详细信息， 可以将 <code>-o</code> 或 <code>--output</code> 参数添加到受支持的 <code>kubectl</code> 命令中。</p>
+<h4 id="语法-1"><a href="#语法-1" class="headerlink" title="语法"></a>语法</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl [command] [TYPE] [NAME] -o &lt;output_format&gt;</span><br></pre></td></tr></table></figure>
+
+<p>取决于具体的 <code>kubectl</code> 操作，支持的输出格式如下：</p>
+<table>
+<thead>
+<tr>
+<th>输出格式</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-o custom-columns=&lt;spec&gt;</code></td>
+<td>使用逗号分隔的<a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/#custom-columns">自定义列</a>列表打印表。</td>
+</tr>
+<tr>
+<td><code>-o custom-columns-file=&lt;filename&gt;</code></td>
+<td>使用 <code>&lt;filename&gt;</code> 文件中的<a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/#custom-columns">自定义列</a>模板打印表。</td>
+</tr>
+<tr>
+<td><code>-o json</code></td>
+<td>输出 JSON 格式的 API 对象</td>
+</tr>
+<tr>
+<td><code>-o jsonpath=&lt;template&gt;</code></td>
+<td>打印 <a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/jsonpath/">jsonpath</a> 表达式定义的字段</td>
+</tr>
+<tr>
+<td><code>-o jsonpath-file=&lt;filename&gt;</code></td>
+<td>打印 <code>&lt;filename&gt;</code> 文件中 <a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/jsonpath/">jsonpath</a> 表达式定义的字段。</td>
+</tr>
+<tr>
+<td><code>-o name</code></td>
+<td>仅打印资源名称而不打印任何其他内容。</td>
+</tr>
+<tr>
+<td><code>-o wide</code></td>
+<td>以纯文本格式输出，包含所有附加信息。对于 Pod 包含节点名。</td>
+</tr>
+<tr>
+<td><code>-o yaml</code></td>
+<td>输出 YAML 格式的 API 对象。</td>
+</tr>
+</tbody></table>
+<h5 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h5><p>在此示例中，以下命令将单个 Pod 的详细信息输出为 YAML 格式的对象：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pod web-pod-13je7 -o yaml</span><br></pre></td></tr></table></figure>
+
+<p>请记住：有关每个命令支持哪种输出格式的详细信息， 请参阅 <a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/kubectl/">kubectl</a> 参考文档。</p>
+<h4 id="自定义列"><a href="#自定义列" class="headerlink" title="自定义列"></a>自定义列</h4><p>要定义自定义列并仅将所需的详细信息输出到表中，可以使用 <code>custom-columns</code> 选项。 你可以选择内联定义自定义列或使用模板文件：<code>-o custom-columns=&lt;spec&gt;</code> 或 <code>-o custom-columns-file=&lt;filename&gt;</code>。</p>
+<h5 id="示例-1"><a href="#示例-1" class="headerlink" title="示例"></a>示例</h5><p>内联：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods &lt;pod-name&gt; -o custom-columns=NAME:.metadata.name,RSRC:.metadata.resourceVersion</span><br></pre></td></tr></table></figure>
+
+<p>模板文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods &lt;pod-name&gt; -o custom-columns-file=template.txt</span><br></pre></td></tr></table></figure>
+
+<p>其中，<code>template.txt</code> 文件包含：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME          RSRC</span><br><span class="line">metadata.name metadata.resourceVersion</span><br></pre></td></tr></table></figure>
+
+<p>运行这两个命令之一的结果类似于：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME           RSRC</span><br><span class="line">submit-queue   610995</span><br></pre></td></tr></table></figure>
+
+<h4 id="Server-side-列"><a href="#Server-side-列" class="headerlink" title="Server-side 列"></a>Server-side 列</h4><p><code>kubectl</code> 支持从服务器接收关于对象的特定列信息。 这意味着对于任何给定的资源，服务器将返回与该资源相关的列和行，以便客户端打印。 通过让服务器封装打印的细节，这允许在针对同一集群使用的客户端之间提供一致的人类可读输出。</p>
+<p>此功能默认启用。要禁用它，请将该 <code>--server-print=false</code> 参数添加到 <code>kubectl get</code> 命令中。</p>
+<h5 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h5><p>要打印有关 Pod 状态的信息，请使用如下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods &lt;pod-name&gt; --server-print=false</span><br></pre></td></tr></table></figure>
+
+<p>输出类似于：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">NAME       AGE</span><br><span class="line">pod-name   1m</span><br></pre></td></tr></table></figure>
+
+<h3 id="排序列表对象"><a href="#排序列表对象" class="headerlink" title="排序列表对象"></a>排序列表对象</h3><p>要将对象排序后输出到终端窗口，可以将 <code>--sort-by</code> 参数添加到支持的 <code>kubectl</code> 命令。 通过使用 <code>--sort-by</code> 参数指定任何数字或字符串字段来对对象进行排序。 要指定字段，请使用 <a target="_blank" rel="noopener" href="https://kubernetes.io/zh-cn/docs/reference/kubectl/jsonpath/">jsonpath</a> 表达式。</p>
+<h4 id="语法-2"><a href="#语法-2" class="headerlink" title="语法"></a>语法</h4><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl [command] [TYPE] [NAME] --sort-by=&lt;jsonpath_exp&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="示例-2"><a href="#示例-2" class="headerlink" title="示例"></a>示例</h5><p>要打印按名称排序的 Pod 列表，请运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods --sort-by=.metadata.name</span><br></pre></td></tr></table></figure>
+
+<h2 id="示例：常用操作"><a href="#示例：常用操作" class="headerlink" title="示例：常用操作"></a>示例：常用操作</h2><p>使用以下示例集来帮助你熟悉运行常用 kubectl 操作：</p>
+<p><code>kubectl apply</code> - 以文件或标准输入为准应用或更新资源。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用 example-service.yaml 中的定义创建服务。</span></span><br><span class="line">kubectl apply -f example-service.yaml</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用 example-controller.yaml 中的定义创建 replication controller。</span></span><br><span class="line">kubectl apply -f example-controller.yaml</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用 &lt;directory&gt; 路径下的任意 .yaml、.yml 或 .json 文件 创建对象。</span></span><br><span class="line">kubectl apply -f &lt;directory&gt;</span><br></pre></td></tr></table></figure>
+
+<p><code>kubectl get</code> - 列出一个或多个资源。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">以纯文本输出格式列出所有 Pod。</span></span><br><span class="line">kubectl get pods</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">以纯文本输出格式列出所有 Pod，并包含附加信息(如节点名)。</span></span><br><span class="line">kubectl get pods -o wide</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">以纯文本输出格式列出具有指定名称的副本控制器。提示：你可以使用别名 <span class="string">&#x27;rc&#x27;</span> 缩短和替换 <span class="string">&#x27;replicationcontroller&#x27;</span> 资源类型。</span></span><br><span class="line">kubectl get replicationcontroller &lt;rc-name&gt;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">以纯文本输出格式列出所有副本控制器和服务。</span></span><br><span class="line">kubectl get rc,services</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">以纯文本输出格式列出所有守护程序集，包括未初始化的守护程序集。</span></span><br><span class="line">kubectl get ds --include-uninitialized</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">列出在节点 server01 上运行的所有 Pod</span></span><br><span class="line">kubectl get pods --field-selector=spec.nodeName=server01</span><br></pre></td></tr></table></figure>
+
+<p><code>kubectl describe</code> - 显示一个或多个资源的详细状态，默认情况下包括未初始化的资源。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">显示名为 &lt;pod-name&gt; 的 Pod 的详细信息。</span></span><br><span class="line">kubectl describe nodes &lt;node-name&gt;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">显示名为 &lt;pod-name&gt; 的 Pod 的详细信息。</span></span><br><span class="line">kubectl describe pods/&lt;pod-name&gt;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">显示由名为 &lt;rc-name&gt; 的副本控制器管理的所有 Pod 的详细信息。</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">记住：副本控制器创建的任何 Pod 都以副本控制器的名称为前缀。</span></span><br><span class="line">kubectl describe pods &lt;rc-name&gt;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">描述所有的 Pod</span></span><br><span class="line">kubectl describe pods</span><br></pre></td></tr></table></figure>
+
+<p><strong>说明：</strong></p>
+<p><code>kubectl get</code> 命令通常用于检索同一资源类别的一个或多个资源。 它具有丰富的参数，允许你使用 <code>-o</code> 或 <code>--output</code> 参数自定义输出格式。 你可以指定 <code>-w</code> 或 <code>--watch</code> 参数以开始监测特定对象的更新。 <code>kubectl describe</code> 命令更侧重于描述指定资源的许多相关方面。它可以调用对 <code>API 服务器</code> 的多个 API 调用来为用户构建视图。 例如，该 <code>kubectl describe node</code> 命令不仅检索有关节点的信息，还检索在其上运行的 Pod 的摘要，为节点生成的事件等。</p>
+<p><code>kubectl delete</code> - 基于文件、标准输入或通过指定标签选择器、名称、资源选择器或资源来删除资源。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使用 pod.yaml 文件中指定的类型和名称删除 Pod。</span></span><br><span class="line">kubectl delete -f pod.yaml</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">删除所有带有 <span class="string">&#x27;&lt;label-key&gt;=&lt;label-value&gt;&#x27;</span> 标签的 Pod 和服务。</span></span><br><span class="line">kubectl delete pods,services -l &lt;label-key&gt;=&lt;label-value&gt;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">删除所有 Pod，包括未初始化的 Pod。</span></span><br><span class="line">kubectl delete pods --all</span><br></pre></td></tr></table></figure>
+
+<p><code>kubectl exec</code> - 对 Pod 中的容器执行命令。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从 Pod &lt;pod-name&gt; 中获取运行 <span class="string">&#x27;date&#x27;</span> 的输出。默认情况下，输出来自第一个容器。</span></span><br><span class="line">kubectl exec &lt;pod-name&gt; -- date</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">运行输出 <span class="string">&#x27;date&#x27;</span> 获取在 Pod &lt;pod-name&gt; 中容器 &lt;container-name&gt; 的输出。</span></span><br><span class="line">kubectl exec &lt;pod-name&gt; -c &lt;container-name&gt; -- date</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">获取一个交互 TTY 并在 Pod  &lt;pod-name&gt; 中运行 /bin/bash。默认情况下，输出来自第一个容器。</span></span><br><span class="line">kubectl exec -ti &lt;pod-name&gt; -- /bin/bash</span><br></pre></td></tr></table></figure>
+
+<p><code>kubectl logs</code> - 打印 Pod 中容器的日志。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">返回 Pod &lt;pod-name&gt; 的日志快照。</span></span><br><span class="line">kubectl logs &lt;pod-name&gt;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从 Pod &lt;pod-name&gt; 开始流式传输日志。这类似于 <span class="string">&#x27;tail -f&#x27;</span> Linux 命令。</span></span><br><span class="line">kubectl logs -f &lt;pod-name&gt;</span><br></pre></td></tr></table></figure>
+
+<p><code>kubectl diff</code> - 查看集群建议更新的差异。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">“pod.json”中包含的差异资源。</span></span><br><span class="line">kubectl diff -f pod.json</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">从标准输入读取的差异文件。</span></span><br><span class="line">cat service.yaml | kubectl diff -f -</span><br></pre></td></tr></table></figure>
+
+<h2 id="示例：创建和使用插件"><a href="#示例：创建和使用插件" class="headerlink" title="示例：创建和使用插件"></a>示例：创建和使用插件</h2><p>使用以下示例来帮助你熟悉编写和使用 <code>kubectl</code> 插件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">用任何语言创建一个简单的插件，并为生成的可执行文件命名</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">以前缀 <span class="string">&quot;kubectl-&quot;</span> 开始</span></span><br><span class="line">cat ./kubectl-hello</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/sh</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">这个插件打印单词 <span class="string">&quot;hello world&quot;</span></span></span><br><span class="line">echo &quot;hello world&quot;</span><br></pre></td></tr></table></figure>
+
+<p>这个插件写好了，把它变成可执行的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">chmod</span> a+x ./kubectl-hello</span><br><span class="line"></span><br><span class="line"><span class="comment"># 并将其移动到路径中的某个位置</span></span><br><span class="line">sudo <span class="built_in">mv</span> ./kubectl-hello /usr/local/bin</span><br><span class="line">sudo <span class="built_in">chown</span> root:root /usr/local/bin</span><br><span class="line"></span><br><span class="line"><span class="comment"># 你现在已经创建并&quot;安装了&quot;一个 kubectl 插件。</span></span><br><span class="line"><span class="comment"># 你可以开始使用这个插件，从 kubectl 调用它，就像它是一个常规命令一样</span></span><br><span class="line">kubectl hello</span><br><span class="line">hello world</span><br><span class="line"><span class="comment"># 你可以&quot;卸载&quot;一个插件，只需从你的 $PATH 中删除它</span></span><br><span class="line">sudo <span class="built_in">rm</span> /usr/local/bin/kubectl-hello</span><br></pre></td></tr></table></figure>
+
+<p>为了查看可用的所有 <code>kubectl</code> 插件，你可以使用 <code>kubectl plugin list</code> 子命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl plugin list</span><br></pre></td></tr></table></figure>
+
+<p>输出类似于：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">The following kubectl-compatible plugins are available:</span><br><span class="line"></span><br><span class="line">/usr/local/bin/kubectl-hello</span><br><span class="line">/usr/local/bin/kubectl-foo</span><br><span class="line">/usr/local/bin/kubectl-bar</span><br></pre></td></tr></table></figure>
+
+<p><code>kubectl plugin list</code> 指令也可以向你告警哪些插件被运行，或是被其它插件覆盖了，例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">sudo chmod -x /usr/local/bin/kubectl-foo # 删除执行权限</span><br><span class="line">kubectl plugin list</span><br><span class="line">The following kubectl-compatible plugins are available:</span><br><span class="line"></span><br><span class="line">/usr/local/bin/kubectl-hello</span><br><span class="line">/usr/local/bin/kubectl-foo</span><br><span class="line">  - warning: /usr/local/bin/kubectl-foo identified as a plugin, but it is not executable</span><br><span class="line">/usr/local/bin/kubectl-bar</span><br><span class="line"></span><br><span class="line">error: one plugin warning was found</span><br></pre></td></tr></table></figure>
+
+<p>你可以将插件视为在现有 kubectl 命令之上构建更复杂功能的一种方法：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat ./kubectl-whoami</span><br></pre></td></tr></table></figure>
+
+<p>接下来的几个示例假设你已经将 <code>kubectl-whoami</code> 设置为以下内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">这个插件利用 `kubectl config` 命令基于当前所选上下文输出当前用户的信息</span></span><br><span class="line">kubectl config view --template=&#x27;&#123;&#123; range .contexts &#125;&#125;&#123;&#123; if eq .name &quot;&#x27;$(kubectl config current-context)&#x27;&quot; &#125;&#125;Current user: &#123;&#123; printf &quot;%s\n&quot; .context.user &#125;&#125;&#123;&#123; end &#125;&#125;&#123;&#123; end &#125;&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>运行以上命令将为你提供一个输出，其中包含 KUBECONFIG 文件中当前上下文的用户：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">使文件成为可执行的</span></span><br><span class="line">sudo chmod +x ./kubectl-whoami</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">然后移动到你的路径中</span></span><br><span class="line">sudo mv ./kubectl-whoami /usr/local/bin</span><br><span class="line"></span><br><span class="line">kubectl whoami</span><br><span class="line">Current user: plugins-user</span><br></pre></td></tr></table></figure></article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/k8s/">k8s</a></div><div class="post_share"><div class="social-share" data-image="https://github.com/HDXP/storage/blob/master/avatar.jpg?raw=true" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/06/04/CKA%E8%80%83%E8%AF%95%E8%80%83%E9%A2%98/" title="CKA考试题"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CKA考试题</div></div></a></div><div class="next-post pull-right"><a href="/2023/05/31/%E7%BD%91%E7%BB%9C%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E7%9B%B8%E5%85%B3%E6%8C%87%E6%A0%87/" title="网络性能监控相关指标"><div class="cover" style="background: var(--default-bg-color)"></div><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">网络性能监控相关指标</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2023/06/04/CKA%E8%80%83%E8%AF%95%E8%80%83%E9%A2%98/" title="CKA考试题"><div class="cover" style="background: var(--default-bg-color)"></div><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2023-06-04</div><div class="title">CKA考试题</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://github.com/HDXP/storage/blob/master/avatar.jpg?raw=true" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">邯郸小胖</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">5</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">3</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/hdxp"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/hdxp" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:zhanghengning@foxmail.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">永远相信美好的事情即将发生</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7-kubectl"><span class="toc-number">1.</span> <span class="toc-text">命令行工具 (kubectl)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95"><span class="toc-number">1.1.</span> <span class="toc-text">语法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9B%86%E7%BE%A4%E5%86%85%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E5%92%8C%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E8%A6%86%E7%9B%96"><span class="toc-number">1.2.</span> <span class="toc-text">集群内身份验证和命名空间覆盖</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C"><span class="toc-number">1.3.</span> <span class="toc-text">操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%B5%84%E6%BA%90%E7%B1%BB%E5%9E%8B"><span class="toc-number">1.4.</span> <span class="toc-text">资源类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BE%93%E5%87%BA%E9%80%89%E9%A1%B9"><span class="toc-number">1.5.</span> <span class="toc-text">输出选项</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E8%BE%93%E5%87%BA"><span class="toc-number">1.5.1.</span> <span class="toc-text">格式化输出</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95-1"><span class="toc-number">1.5.1.1.</span> <span class="toc-text">语法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.5.1.1.1.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%88%97"><span class="toc-number">1.5.1.2.</span> <span class="toc-text">自定义列</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-1"><span class="toc-number">1.5.1.2.1.</span> <span class="toc-text">示例</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Server-side-%E5%88%97"><span class="toc-number">1.5.1.3.</span> <span class="toc-text">Server-side 列</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E4%BE%8B%E5%AD%90"><span class="toc-number">1.5.1.3.1.</span> <span class="toc-text">例子</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8E%92%E5%BA%8F%E5%88%97%E8%A1%A8%E5%AF%B9%E8%B1%A1"><span class="toc-number">1.5.2.</span> <span class="toc-text">排序列表对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AF%AD%E6%B3%95-2"><span class="toc-number">1.5.2.1.</span> <span class="toc-text">语法</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B-2"><span class="toc-number">1.5.2.1.1.</span> <span class="toc-text">示例</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9A%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C"><span class="toc-number">1.6.</span> <span class="toc-text">示例：常用操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%A4%BA%E4%BE%8B%EF%BC%9A%E5%88%9B%E5%BB%BA%E5%92%8C%E4%BD%BF%E7%94%A8%E6%8F%92%E4%BB%B6"><span class="toc-number">1.7.</span> <span class="toc-text">示例：创建和使用插件</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/06/27/TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%BB%BA%E8%BF%9E%E4%B8%8ETCP%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B%E6%8B%86%E8%BF%9E%E7%9A%84%E8%BF%87%E7%A8%8B%E6%8F%8F%E8%BF%B0/" title="TCP三次握手建连与TCP四次挥手拆连的过程描述">TCP三次握手建连与TCP四次挥手拆连的过程描述</a><time datetime="2023-06-27T17:30:00.000Z" title="发表于 2023-06-27 17:30:00">2023-06-27</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/06/26/%E5%90%AF%E5%8A%A8docker%E5%AE%B9%E5%99%A8%E6%8A%A5%E9%94%99Failed%20to%20Setup%20IP%20tables/" title="启动docker容器报错Failed to Setup IP tables">启动docker容器报错Failed to Setup IP tables</a><time datetime="2023-06-26T15:30:00.000Z" title="发表于 2023-06-26 15:30:00">2023-06-26</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/06/04/CKA%E8%80%83%E8%AF%95%E8%80%83%E9%A2%98/" title="CKA考试题">CKA考试题</a><time datetime="2023-06-04T10:30:00.000Z" title="发表于 2023-06-04 10:30:00">2023-06-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/06/04/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7kubectl%E4%BB%8B%E7%BB%8D/" title="命令行工具kubectl介绍">命令行工具kubectl介绍</a><time datetime="2023-06-04T10:30:00.000Z" title="发表于 2023-06-04 10:30:00">2023-06-04</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2023/05/31/%E7%BD%91%E7%BB%9C%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E7%9B%B8%E5%85%B3%E6%8C%87%E6%A0%87/" title="网络性能监控相关指标">网络性能监控相关指标</a><time datetime="2023-05-31T10:30:00.000Z" title="发表于 2023-05-31 10:30:00">2023-05-31</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By 邯郸小胖</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="click-heart" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-heart.min.js" async="async" mobile="false"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
